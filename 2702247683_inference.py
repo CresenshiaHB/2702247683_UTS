@@ -84,6 +84,7 @@ def main():
     person_income = st.number_input('Annual Income', min_value=0, value=30000)
     person_emp_exp = st.number_input('Employment Experience (years)', min_value=0, value=1)
     person_home_ownership = st.selectbox('Home Ownership', ['MORTGAGE', 'RENT', 'OWN', 'OTHER'])
+    loan_amnt = st.number_input('Loan Amount', min_value=0, value=15000)
     loan_intent = st.selectbox('Loan Intent', ['PERSONAL', 'VENTURE', 'EDUCATION', 'HOMEIMPROVEMENT', 'MEDICAL', 'DEBTCONSOLIDATION'])
     loan_int_rate = st.number_input('Loan Interest Rate (%)', value=10.0)
     loan_percent_income = st.number_input('Loan Percent of Income', value=0.1)
