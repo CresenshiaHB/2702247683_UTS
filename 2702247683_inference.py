@@ -126,12 +126,16 @@ def main():
             'cb_person_cred_hist_length',
             'credit_score',
             'previous_loan_defaults_on_file',
-            'person_home_ownership_RENT',
-            'person_home_ownership_OWN',
             'person_home_ownership_MORTGAGE',
-            'loan_intent_PERSONAL',
+            'person_home_ownership_OTHER',
+            'person_home_ownership_OWN',
+            'person_home_ownership_RENT',
+            'loan_intent_DEBTCONSOLIDATION',
             'loan_intent_EDUCATION',
-            'loan_intent_MEDICAL'
+            'loan_intent_HOMEIMPROVEMENT',
+            'loan_intent_MEDICAL',
+            'loan_intent_PERSONAL',
+            'loan_intent_VENTURE'
         ]
 
         # Encode nilai features dari user sebelum dimasukan ke dalam model
