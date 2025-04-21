@@ -1,36 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # Nama : Cresenshia Hillary Benida
-# 
 # NIM : 2702247683
-
-# # Dataset A (Loan)
-# 
-# Mengenai dataset:
-# 
-# Dataset A terdiri dari 14 kolom dan 45000 baris, berikut adalah penjelasan dari setiap kolom
-# 
-# - person_age = Usia dari orang tersebut
-# - person_gender = Gender dari orang tersebut
-# - person_education = Tingkat pendidikan tertinggi
-# - person_income = Pendapatan tahunan
-# - person_emp_exp = Tahun pengalaman bekerja
-# - person_home_ownership = Status kepemilikan tempat huni
-# - loan_amnt = Jumlah pinjaman yang diminta
-# - loan_intent = Tujuan dari pinjaman
-# - loan_int_rate = Suku bunga pinjaman
-# - loan_percent_income = Jumlah pinjaman sebagai persentase dari pendapatan tahunan
-# - cb_person_cred_hist_length = Durasi kredit dalam tahun
-# - credit_score = Skor kredit dari orang tersebut
-# - previous_loan_defaults_on_file = Indikator tunggakan pinjaman sebelumnya
-# - loan_status (target variable) = Persetujuan pinjaman; 1: diterima dan 0: ditolak
-
-# ## Inference / Prediction Code
-# Membuat code inference/prediction untuk proses deployment 
-
-# In[1]:
-
+# Dataset A (Loan)
 
 import streamlit as st
 import joblib
@@ -81,7 +51,7 @@ def main():
     person_age = st.number_input('Age', min_value=0, value=25)
     person_gender = st.selectbox('Gender', ['male', 'female'])
     person_education = st.selectbox('Education Level', ['High School', 'Associate', 'Bachelor', 'Master', 'Doctorate'])
-    person_income = st.number_input('Annual Income', min_value=0, value=30000)
+    person_income = st.number_input('Income', min_value=0, value=30000)
     person_emp_exp = st.number_input('Employment Experience (years)', min_value=0, value=1)
     person_home_ownership = st.selectbox('Home Ownership', ['MORTGAGE', 'RENT', 'OWN', 'OTHER'])
     loan_amnt = st.number_input('Loan Amount', min_value=0, value=15000)
@@ -144,7 +114,7 @@ def main():
         # Prediksi
         result = make_prediction(features)
 
-        st.success(f'The prediction (loan status) is: {"Approved" if result == 1 else "Rejected"}')
+        st.success(f'The prediction of loan status is: {"Approved" if result == 1 else "Rejected"}')
 
 if __name__ == '__main__':
     main()
