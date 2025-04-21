@@ -1,38 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # Nama : Cresenshia Hillary Benida
-# 
 # NIM : 2702247683
+# Dataset A (Loan)
 
-# # Dataset A (Loan)
-# Mengenai dataset:
-# 
-# Dataset A terdiri dari 14 kolom dan 45000 baris, berikut adalah penjelasan dari setiap kolom
-# 
-# - person_age = Usia dari orang tersebut
-# - person_gender = Gender dari orang tersebut
-# - person_education = Tingkat pendidikan tertinggi
-# - person_income = Pendapatan tahunan
-# - person_emp_exp = Tahun pengalaman bekerja
-# - person_home_ownership = Status kepemilikan tempat huni
-# - loan_amnt = Jumlah pinjaman yang diminta
-# - loan_intent = Tujuan dari pinjaman
-# - loan_int_rate = Suku bunga pinjaman
-# - loan_percent_income = Jumlah pinjaman sebagai persentase dari pendapatan tahunan
-# - cb_person_cred_hist_length = Durasi kredit dalam tahun
-# - credit_score = Skor kredit dari orang tersebut
-# - previous_loan_defaults_on_file = Indikator tunggakan pinjaman sebelumnya
-# - loan_status (target variable) = Persetujuan pinjaman; 1: diterima dan 0: ditolak
-
-# ## OOP
+# OOP
 # Seluruh proses training dari algoritma machine learning yang terbaik dibubah dalam format OOP
 
-# In[1]:
-
-
-# Nama : Cresenshia Hillary Benida
-# NIM  : 2702247683
 
 # import library
 import pandas as pd
@@ -45,7 +17,7 @@ from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 import pickle
 
-# class DataHandler 
+# Class DataHandler 
 class DataHandler:
     def __init__(self, file_path):
         self.file_path = file_path
@@ -53,25 +25,26 @@ class DataHandler:
         self.input_df = None  
         self.output_df = None
 
-    # self data read csv
+    # Data read csv
     def load_data(self):
         self.data = pd.read_csv(self.file_path, delimiter=',')
 
+    # Remove feature
     def remove_column(self, column):
         self.data = self.data.drop(columns=[column])
     
-    # data target column
+    # Data target column
     def create_input_output(self, target_column):
         self.output_df = self.data[target_column]
         self.input_df = self.data.drop(target_column, axis=1)
 
-    # Handle value inkonsisten
+    # Handle value yang inkonsisten
     def replace_values(self, column_name, mapping_value):
         if column_name in self.data.columns:
             self.data[column_name] = self.data[column_name].astype(str).str.strip().str.lower()     # seragamkan dulu valuenya
             self.data[column_name] = self.data[column_name].replace(mapping_value)
 
-# class ModelHandler
+# Class ModelHandler
 class ModelHandler:
     def __init__(self, input_data, output_data):
         self.input_data = input_data
@@ -102,6 +75,7 @@ class ModelHandler:
     # Kondisi 2 : missing value di kolom dengan outliers -> isi dengan nilai median train data
     # Konsisi 3 : missing value di kolom tanpa outliers -> isi dengan nilai mean train data
     def fillingNAWithNumbers(self, column):
+        # Kondisi 1
         if column == 'person_income':
             # Imput value berdasarkan column loan_amnt dan loan_percent_income
             missing_row_income = self.x_train[column].isna()
@@ -122,18 +96,22 @@ class ModelHandler:
             self.x_train[column].fillna(median_income_train, inplace=True)
             self.x_test[column].fillna(median_income_test, inplace=True)
         else:
+            # Kondisi 2
             if self.check_outliers(column):
                 fill_value = self.x_train[column].median()
+            # Kondisi 3
             else:
                 fill_value = self.x_train[column].mean()
             self.x_train[column].fillna(fill_value, inplace=True)
             self.x_test[column].fillna(fill_value, inplace=True)
 
+    # Mengisi missing value feature categorical
     def fillingNAWithCategory(self, column_name):
         mode_value = self.x_train[column_name].mode()[0]
         self.x_train[column_name].fillna(mode_value, inplace=True)
         self.x_test[column_name].fillna(mode_value, inplace=True)
 
+    # Encode feature untuk modeling
     def encode_columns(self,
         binary_columns: dict = None,
         label_columns: dict = None,
@@ -142,11 +120,13 @@ class ModelHandler:
         if binary_columns:
             self.x_train = self.x_train.replace(binary_columns)
             self.x_test = self.x_test.replace(binary_columns)
+            
         # Label encoding
         if label_columns:
             for col, mapping in label_columns.items():
                 self.x_train[col] = self.x_train[col].map(mapping)
                 self.x_test[col] = self.x_test[col].map(mapping)
+                
         # One-hot encoding
         if one_hot_columns:
             for col in one_hot_columns:
@@ -157,27 +137,29 @@ class ModelHandler:
                 encode_test.index = self.x_test.index
                 self.x_train = pd.concat([self.x_train.drop(columns=[col]), encode_train], axis=1)
                 self.x_test = pd.concat([self.x_test.drop(columns=[col]), encode_test], axis=1)
+                
         # memastikan semua kolom categorical berubah menjadi numerical
         self.x_train = self.x_train.apply(pd.to_numeric, errors='raise')
         self.x_test = self.x_test.apply(pd.to_numeric, errors='raise')
 
+    # Membuat model dengan XGBoost (model dengan akurasi terbaik)
     def createModel(self):
          self.model = xgb.XGBClassifier()
 
+    # Train model XGBoost
     def train_model(self):
         self.model.fit(self.x_train, self.y_train)
 
-    def evaluate_model(self):
-        predictions = self.model.predict(self.x_test)
-        return accuracy_score(self.y_test, predictions)
-    
+    # Membuat prediksi dengan model yang telah dilatih
     def makePrediction(self):
         self.y_predict = self.model.predict(self.x_test) 
-        
+
+    # Membuat report untuk melihat performa model
     def createReport(self):
         print('\nClassification Report\n')
         print(classification_report(self.y_test, self.y_predict))
 
+    # Menyimpan model dalam bentuk pickle
     def save_model_to_file(self, filename):
         with open(filename, 'wb') as file: 
             pickle.dump(self.model, file) 
@@ -236,5 +218,5 @@ model_handler.train_model()
 
 model_handler.makePrediction()
 model_handler.createReport()
-#model_handler.save_model_to_file('xgb_class.pkl') 
+# model_handler.save_model_to_file('xgb_class.pkl') 
 
