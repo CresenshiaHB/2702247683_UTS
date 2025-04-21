@@ -45,7 +45,7 @@ def make_prediction(features):
     return prediction[0]
 
 def main():
-    st.title('Loan Problem Machine Learning Model Deployment')
+    st.title('Loan Status Prediction with Machine Learning Model - Model Deployment')
 
     # Input user per fitur
     person_age = st.number_input('Age', min_value=0, value=25)
